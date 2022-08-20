@@ -13,7 +13,7 @@
 1. [Установите composer](http://getcomposer.org/doc/00-intro.md), если его еще нет
 2. Клонируйте репозиторий с плагином: `composer create-project suvarivaza/joomshopping-freekassa --stability=dev --prefer-dist`
 3. Перейдите в папку плагина: `cd joomshopping-freekassa`
-4. Упакуйте плагин в архив: `composer archive --format=zip`
+4. Упакуйте плагин в архив: `composer archive --format=zip --file=freekassa`
 
 
 ## Установка, настройка, удаление плагина
