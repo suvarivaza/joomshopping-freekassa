@@ -8,7 +8,7 @@
 */
 defined('_JEXEC') or die();
 
-require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/1vendor/autoload.php';
 
 class pm_fk extends Suvarivaza\Joomshopping\FreeKassa\FreeKassaPayment
 {

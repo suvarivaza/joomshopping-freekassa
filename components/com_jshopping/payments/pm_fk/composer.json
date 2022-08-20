@@ -1,24 +1,13 @@
 {
-    "name": "suvarivaza/joomshopping-freekassa",
-    "description": "It is payment plugin freekassa for joomla joomshopping",
-    "keywords": ["freekassa", "joomshopping", "joomla"],
-    "type": "library",
-    "license": "MIT",
-    "homepage": "https://github.com/suvarivaza/joomshopping-freekassa",
-    "authors": [
-        {
-            "name": "suvarivaza",
-            "email": "suvarivaza@gmail.com"
-        }
-    ],
-    "minimum-stability": "dev",
-    "require": {},
-    "autoload": {
-        "psr-4": {
-            "Suvarivaza\\JoomShopping\\FreeKassa\\": "src/"
-        },
-        "files": [
-            "helpers/functions.php"
-        ]
-    }
+  "require": {
+    "php": ">=7.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "Suvarivaza\\JoomShopping\\FreeKassa\\": "src/"
+    },
+    "files": [
+      "helpers/functions.php"
+    ]
+  }
 }

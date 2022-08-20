@@ -1,0 +1,31 @@
+{
+  "name": "suvarivaza/joomshopping-freekassa",
+  "description": "Plugin for Joomla 3 and JoomShopping 4 for payment by Freekassa",
+  "keywords": [
+    "freekassa",
+    "joomshopping",
+    "joomla",
+    "payment"
+  ],
+  "type": "library",
+  "license": "MIT",
+  "homepage": "https://github.com/suvarivaza/joomshopping-freekassa",
+  "authors": [
+    {
+      "name": "suvarivaza",
+      "email": "suvarivaza@gmail.com"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "php": ">=7.2"
+  },
+  "archive": {
+    "exclude": [
+      "composer.*",
+      ".gitignore",
+      "LICENSE",
+      "README.md"
+    ]
+  }
+}
