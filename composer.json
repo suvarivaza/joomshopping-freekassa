@@ -25,7 +25,8 @@
       "composer.*",
       ".gitignore",
       "LICENSE",
-      "README.md"
+      "README.md",
+      "instruction.pdf"
     ]
   }
 }
