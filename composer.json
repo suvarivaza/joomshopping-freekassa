@@ -22,11 +22,12 @@
   },
   "archive": {
     "exclude": [
-      "composer.*",
-      ".gitignore",
-      "LICENSE",
-      "README.md",
-      "instruction.pdf"
+      "/.DS_Store",
+      "/composer.*",
+      "/.gitignore",
+      "/README.md",
+      "/instruction.pdf",
+      "/*.zip"
     ]
   }
 }

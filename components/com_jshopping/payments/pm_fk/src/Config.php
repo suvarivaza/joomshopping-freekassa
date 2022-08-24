@@ -1,6 +1,6 @@
 <?php
 
-namespace Suvarivaza\JoomShopping\FreeKassa;
+namespace Suvarivaza\Joomshopping\FreeKassa;
 
 class Config
 {
@@ -19,14 +19,14 @@ class Config
         $this->admin_form_fields = [
             'merchant_url' => [
                 'name' => 'URL мерчанта',
-                'description' => '',
+                'description' => 'URL мерчанта',
                 'value' => 'https://pay.freekassa.ru/',
                 'type' => 'text',
                 'size' => '70'
             ],
             'merchant_id' => [
                 'name' => 'Идентификатор кассы',
-                'description' => '',
+                'description' => 'Идентификатор кассы',
                 'value' => '',
                 'type' => 'text',
                 'size' => '70'
@@ -35,20 +35,13 @@ class Config
                 'name' => 'Первое секретное слово',
                 'description' => 'Перовое секретное слово в настройках кассы.',
                 'value' => '',
-                'type' => 'password',
+                'type' => 'text',
                 'size' => '70'
             ],
             'secret_word_2' => [
                 'name' => 'Второе секретное слово',
                 'description' => 'Второе секретное слово в настройках кассы.',
                 'value' => '',
-                'type' => 'password',
-                'size' => '70'
-            ],
-            'log_file' => [
-                'name' => 'Путь до лог файла',
-                'description' => '',
-                'value' => '/freekassa.log',
                 'type' => 'text',
                 'size' => '70'
             ],
@@ -60,28 +53,28 @@ class Config
             ],
             'transaction_end_status' => [
                 'name' => 'Статус заказа для успешных транзакций',
-                'description' => 'merchant_url',
+                'description' => 'Статус заказа для успешных транзакций',
                 'type' => 'select',
                 'value' => $this->getStatusesOrder(),
                 'size' => '70'
             ],
             'transaction_pending_status' => [
                 'name' => 'Статус заказа для платежей в ожидании',
-                'description' => '',
+                'description' => 'Статус заказа для платежей в ожидании',
                 'value' => $this->getStatusesOrder(),
                 'type' => 'select',
                 'size' => '70'
             ],
             'transaction_failed_status' => [
                 'name' => 'Статус заказа для неудавшихся транзакций',
-                'description' => '',
+                'description' => 'Статус заказа для неудавшихся транзакций',
                 'value' => $this->getStatusesOrder(),
                 'type' => 'select',
                 'size' => '70'
             ],
             'status_url' => [
                 'name' => 'URL оповещения',
-                'description' => '',
+                'description' => 'URL оповещения',
                 'value' => $this->getConfigureURL('notify'),
                 'type' => 'text',
                 'readonly' => true,
@@ -89,16 +82,16 @@ class Config
             ],
             'success_url' => [
                 'name' => 'URL возврата в случае успеха',
-                'description' => '',
-                'value' => $this->getConfigureURL('success'),
+                'description' => 'URL возврата в случае успеха',
+                'value' => $this->getConfigureURL('return'),
                 'type' => 'text',
                 'readonly' => true,
                 'size' => '70'
             ],
             'fail_url' => [
                 'name' => 'URL возврата в случае неудачи',
-                'description' => '',
-                'value' => $this->getConfigureURL('fail'),
+                'description' => 'URL возврата в случае неудачи',
+                'value' => $this->getConfigureURL('cancel'),
                 'type' => 'text',
                 'readonly' => true,
                 'size' => '70'

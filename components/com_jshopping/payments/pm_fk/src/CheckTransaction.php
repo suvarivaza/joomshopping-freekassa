@@ -1,6 +1,6 @@
 <?php
 
-namespace Suvarivaza\JoomShopping\FreeKassa;
+namespace Suvarivaza\Joomshopping\FreeKassa;
 
 class CheckTransaction
 {
@@ -15,14 +15,14 @@ class CheckTransaction
     public $order;
 
     /**
-     * Наименование лог файла
-     */
-    public $log_file;
-
-    /**
      * Массив REQUEST
      */
     public $request;
+
+    /**
+     * IP с которого приходит запрос
+     */
+    private $current_ip = '';
 
     /**
      * Конвертация строки в массив
@@ -32,6 +32,8 @@ class CheckTransaction
         return explode(',', str_replace(' ', '', $data));
     }
 
+
+
     /**
      * Проверка IP адреса с которого приходит запрос
      * вернет true в случае если IP с которого приходит запрос не доверенный
@@ -39,15 +41,20 @@ class CheckTransaction
      */
     private function isNotTrustIp()
     {
-        $current_ip = '';
 
-        if (isset($_SERVER['HTTP_X_REAL_IP'])) {
-            $current_ip = $_SERVER['HTTP_X_REAL_IP'];
+        if(!$this->trust_list_ip) return false; //проверка не будет производится если список доверенных IP пуст
+
+        //если сайт проксируется через Cloudflare то реальный IP сервера будет в $_SERVER["HTTP_CF_CONNECTING_IP"]
+        //но так как этот заголовок легко подделать нужно проеверить что $_SERVER['REMOTE_ADDR'] действительно пренадлежит Cloudflare
+        if (Cloudflare::isActive()) {
+            $this->current_ip = Cloudflare::getRealIp();
+        } else if (!empty($_SERVER['HTTP_X_REAL_IP'])) {
+            $this->current_ip = $_SERVER['HTTP_X_REAL_IP'];
         } else {
-            $current_ip = $_SERVER['REMOTE_ADDR'];
+            $this->current_ip = $_SERVER['REMOTE_ADDR'];
         }
 
-        return !in_array($current_ip, $this->convertStringToArray($this->trust_list_ip));
+        return !in_array($this->current_ip, $this->convertStringToArray($this->trust_list_ip));
     }
 
     /**
@@ -60,7 +67,7 @@ class CheckTransaction
          * Проверка доверенных адресов
          */
         if ($this->isNotTrustIp()) {
-            throw new \Exception('Доступ имеют только доверенные IP адреса.');
+            throw new \Exception('Запрос пришел с недоверенного IP ' . $this->current_ip);
         }
 
 
@@ -68,26 +75,16 @@ class CheckTransaction
          * Сравнение сигнатур
          */
         if ($this->request['SIGN'] !== $signature) {
-            throw new \Exception('Сигнатуры не совпадают.');
+            throw new \Exception('Сигнатуры не совпадают! Проверьте корректность настройки секретных слов!');
         }
 
         /**
          * Сравнение суммы оплаты и суммы заказа
          */
-        if ((string) $this->request['AMOUNT'] !== (string) format_amount($this->order->order_total)) {
-            throw new \Exception('Суммы заказа не совпадают.');
+        if ((string)$this->request['AMOUNT'] !== (string)format_amount($this->order->order_total)) {
+            throw new \Exception('Суммы заказа не совпадают!');
         }
     }
 
-    /**
-     * Запись данных в лог
-     */
-    public function logError($error)
-    {
-        file_put_contents(
-            $_SERVER['DOCUMENT_ROOT'] . $this->log_file,
-            PHP_EOL . date("[m/d/Y h:i:s a] ", time()) . $error . ' IP ' . $_SERVER['REMOTE_ADDR'],
-            FILE_APPEND
-        );
-    }
+
 }
