@@ -75,7 +75,7 @@ class CheckTransaction
          * Сравнение сигнатур
          */
         if ($this->request['SIGN'] !== $signature) {
-            throw new \Exception('Сигнатуры не совпадают! Проверьте корректность настройки секретных слов!');
+            throw new \Exception('Сигнатуры не совпадают! Проверьте корректность секретных слов!');
         }
 
         /**

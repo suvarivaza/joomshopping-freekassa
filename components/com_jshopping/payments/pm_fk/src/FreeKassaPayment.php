@@ -2,7 +2,8 @@
 
 namespace Suvarivaza\Joomshopping\FreeKassa;
 
-class FreeKassaPayment extends \PaymentRoot {
+class FreeKassaPayment extends \PaymentRoot
+{
 
     private $config;
 
@@ -29,11 +30,11 @@ class FreeKassaPayment extends \PaymentRoot {
 //			if (!isset($params[$key])) $params[$key] = '';
 //		}
 
-		render_template('admin-form', [
+        render_template('admin-form', [
             'form_fields' => $form_fields,
             'params' => $params
         ]);
-	}
+    }
 
     public function checkTransaction($pmconfigs, $order, $act)
     {
@@ -42,43 +43,39 @@ class FreeKassaPayment extends \PaymentRoot {
         $check_transaction->trust_list_ip = $pmconfigs['ip_filter'];
         $check_transaction->order = $order;
         $check_transaction->request = \JFactory::getApplication()->input->getArray();
+        $pid = $check_transaction->request['intid'];
 
-        $this->log("\n-----------------------------------------------------\nПолучен запрос act = $act ". print_r($check_transaction->request, true));
+        $this->log("\n-----------------------------------------------------\nПолучен запрос act = $act " . print_r($check_transaction->request, true));
 
-        //обработка URL возврата в случае успеха
-        //нужно просто вернуть на страницу благодарности о заказе
-        //менять статус заказа здесь нельзя. статус заказа меняем при оповещении notify
-        if ($act == 'return')
-        {
-            $this->log('Обработка URL возврата в случае успеха..');
-            if($pmconfigs['transaction_end_status'] == $order->order_status) {
-                $this->log('Заказ оплачен. Статус заказа уже был изменен на '. $pmconfigs['transaction_end_status']);
-                return array(1, 'Заказ №' . $order->order_number . ' уже оплачен'); //order already paid
-            }
-            else {
-                $this->log('Заказ еще не оплачен. Ожидаем уведомление о оплате счета..');
-                return array(2, ''); //order not paid yet
-            }
+        switch ($act) {
+            case 'notify':
+                $this->log('notify process..');
+
+                $signature = generate_signature([
+                    $pmconfigs['merchant_id'],
+                    format_amount($order->order_total),
+                    $pmconfigs['secret_word_2'],
+                    $order->order_id
+                ], ':');
+
+                try {
+                    $this->log('check transaction..');
+                    $check_transaction->checkResponse($signature);
+                    $this->log('Order is paid');
+                    return array(1, '[FK] order is paid [order: ' . $order->order_id . ', pid: ' . $pid . ']'); //возвращаем код 1 - статус заказа изменится на оплачен
+                } catch (\Exception $error) {
+                    $this->log('ERROR! ' . $error->getMessage());
+                    return array(0, '[FK] error [order: ' . $order->order_id . ', error: ' . $error->getMessage() . ']'); //возвращаем код 0 - ошибка
+                }
+            case 'return':
+                $this->log('return process..');
+                return array(9, ''); //здесь нельзя менять статус заказа! просто завершаем заказ и перенаправляем на страницу благоданости!
+            case 'cancel':
+                $this->log('cancel process..');
+                return array(3, '[FK] cancel order [order: ' . $order->order_id . ', pid: ' . $pid . ']');
         }
 
-        $signature = generate_signature([
-            $pmconfigs['merchant_id'],
-            format_amount($order->order_total),
-            $pmconfigs['secret_word_2'],
-            $order->order_id
-        ], ':');
-
-        //act = notify
-        try {
-            $this->log('Проверяем статус транзакции..');
-            $check_transaction->checkResponse($signature);
-            $this->log('Заказ успешно оплачен!');
-            return array(1, 'Заказ №' . $order->order_number . ' успешно оплачен'); //возвращаем код 1 - заказ оплачен
-        } catch (\Exception $error) {
-            $this->log('ОШИБКА! '. $error->getMessage());
-            return array(0, $error->getMessage()); //возвращаем код 0 - ошибка
-        }
-
+        return array(0, "Payment error [order: " . $order->order_id . "]");
 
     }
 
@@ -91,10 +88,10 @@ class FreeKassaPayment extends \PaymentRoot {
     {
         $signature = generate_signature([
             $pmconfigs['merchant_id'],
-			format_amount($order->order_total),
+            format_amount($order->order_total),
             $pmconfigs['secret_word_1'],
             $order->currency_code_iso,
-			$order->order_id
+            $order->order_id
         ], ':');
 
         $data = [];
@@ -131,13 +128,15 @@ class FreeKassaPayment extends \PaymentRoot {
     }
 
 
-    function nofityFinish($pmconfigs, $order, $rescode){
-        saveToLog("checkout.log", __METHOD__ . " | " . 'nofityFinish ');
+    function nofityFinish($pmconfigs, $order, $rescode)
+    {
+        $this->log( __METHOD__ . " | " . 'nofityFinish');
         echo "YES";
     }
 
-    function finish($pmconfigs, $order, $rescode, $act){
-        saveToLog("checkout.log", __METHOD__ . " | " . 'finish ');
+    function finish($pmconfigs, $order, $rescode, $act)
+    {
+        $this->log( __METHOD__ . " | " . 'finish');
     }
 
     /**
@@ -145,7 +144,9 @@ class FreeKassaPayment extends \PaymentRoot {
      */
     public function log($msg)
     {
-        saveToLog('freekassa.log', $msg);
+        if(function_exists('saveToLog')){
+            saveToLog('freekassa.log', $msg);
+        }
     }
 
 }
