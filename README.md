@@ -1,4 +1,5 @@
-# Данный  плагин для Joomshopping позволяет производить оплату с помощью Freekassa
+## Плагин Freekassa для Joomla 3 и JoomShopping 4
+## Данный  плагин для Joomshopping позволяет производить оплату с помощью Freekassa
 
 ## Системные требования
 
@@ -16,9 +17,6 @@
 4. Упакуйте плагин в архив: `composer archive --format=zip --file=freekassa`
 
 
-## Установка, настройка, удаление плагина
+## Инструкция. Установка, настройка, удаление плагина
 * [Установка и настройка плагина](instruction.pdf)
 
-
-### Так же если вы используете composer на вашем сайте joomla то вы можете добавить плагин в ваш проект так:
-composer require suvarivaza/easy-query-builder
